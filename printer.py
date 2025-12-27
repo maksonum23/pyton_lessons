@@ -1,0 +1,6 @@
+print ("start process")
+print ("1% complete")
+print ("50% complete")
+print ("99% complete")
+print ("100% complete")
+print ("process complete")

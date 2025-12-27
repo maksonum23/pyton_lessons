@@ -57,10 +57,24 @@ for file in files:
 print("Cleaning complete! Total files moved:", moved_count)
 
 # log the operation
-now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-log_entry = f"{now} - Folder {target_folder}, Moved {moved_count} files.\n"
+# Get the absolute path of the directory where the script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-with open("cleaner.log", "a") as log_file:
+# Define the path for the 'logs' folder
+log_dir = os.path.join(script_dir, "logs")
+
+# Create the 'logs' folder if it doesn't exist (exist_ok=True prevents errors)
+os.makedirs(log_dir, exist_ok=True)
+
+# Create the full path to the log file inside the logs folder
+log_path = os.path.join(log_dir, "cleaner.log")
+
+# Prepare the log entry with timestamp
+now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+log_entry = f"{now} - Folder: {target_folder}, Moved: {moved_count} files.\n"
+
+# Write to the file in the new location
+with open(log_path, "a") as log_file:
     log_file.write(log_entry)
 
-# End of cleaner.py
+print(f"Cleaning complete! Results saved to: {log_path}")
