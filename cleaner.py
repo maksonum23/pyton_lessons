@@ -1,46 +1,46 @@
+#!/usr/bin/env python3
 import os
 import shutil
+import sys
 
-# 1. Указываем папку, где будем наводить порядок
-# (точка означает "текущая папка", значит ищем папку chaos рядом со скриптом)
-folder_path = "chaos"
+# English comments as requested
+# 1. Check if the user passed the directory path
+if len(sys.argv) < 2:
+    print("ERROR: Please provide the folder path")
+    print("Usage: python3 cleaner.py <folder_path>")
+    sys.exit()
 
-print(f"--- Начинаю уборку в папке: {folder_path} ---")
+target_folder = sys.argv[1]
 
-# 2. Получаем список всех файлов в этой папке
-files = os.listdir(folder_path)
+# 2. Check if the path exists
+if not os.path.exists(target_folder):
+    print(f"Error: Folder '{target_folder}' not found!")
+    sys.exit()
 
-for filename in files:
-    # Собираем полный путь к файлу (например: chaos/photo.png)
-    full_path = os.path.join(folder_path, filename)
+# 3. List all items in the folder
+files = os.listdir(target_folder)
 
-    # Если это папка - пропускаем её, не трогаем
+for file in files:
+    full_path = os.path.join(target_folder, file)
+    
+    # Skip directories to avoid recursion errors
     if os.path.isdir(full_path):
         continue
-
-    # 3. Определяем расширение файла (все, что после точки)
-    # os.path.splitext делит имя на ("photo", ".png")
-    _, extension = os.path.splitext(filename)
+        
+    # Get extension (e.g., "vacation.jpg" -> "jpg")
+    name, extension = os.path.splitext(file)
+    folder_name = extension.lower().replace(".", "")
     
-    # 4. Решаем, куда класть (простая логика)
-    target_folder = "Raznoe"  # Если не знаем, что это - кидаем в "Разное"
+    # Handle files without extensions
+    if not folder_name:
+        folder_name = "other"
+
+    # 4. Create destination folder based on extension
+    dest_dir = os.path.join(target_folder, folder_name)
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
     
-    if extension in ['.jpg', '.png', '.jpeg', '.gif']:
-        target_folder = "Images"
-    elif extension in ['.pdf', '.txt', '.docx', '.doc']:
-        target_folder = "Documents"
-    elif extension in ['.exe', '.deb', '.zip']:
-        target_folder = "Installers"
-
-    # 5. Создаем целевую папку, если её еще нет
-    # (например chaos/Images)
-    target_path = os.path.join(folder_path, target_folder)
-    os.makedirs(target_path, exist_ok=True)
-
-    # 6. Перемещаем файл
-    # Откуда (full_path) -> Куда (target_path + имя файла)
-    shutil.move(full_path, os.path.join(target_path, filename))
-    
-    print(f"Перенес: {filename} -> {target_folder}")
-
-print("--- Уборка завершена ---")
+    # 5. Move the file
+    shutil.move(full_path, os.path.join(dest_dir, file))
+    print(f"Moved {file} to {folder_name}/")
+print("Cleaning complete!")
