@@ -5,7 +5,7 @@ if len(sys.argv) < 2:
     
 name = sys.argv[1]
 
-if name == "Max":
+if name.lower() == "max":
     print("Welcome back, boss!")
 else: 
     print("Idi nahui", name)
